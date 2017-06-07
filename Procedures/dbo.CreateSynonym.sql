@@ -68,12 +68,10 @@ BEGIN
 	---------------------------------------------------------------------------------------------------
 	--// T-SQL CODE                                                                                //--
 	---------------------------------------------------------------------------------------------------
-	
 
 	/*** output ***/ IF (@Debug=1) EXECUTE [dbo].[PrintOutput] @Text=N'SQL Execution Starting:';
 	/*** output ***/ IF (@Debug=1) EXECUTE [dbo].[PrintOutput] @Indent=0, @Text=N'Executing: [config].[CreateSynonym]...';
 	/*** output ***/ IF (@Debug=1) EXECUTE [dbo].[PrintOutput] @Indent=1, @Text=N'Parameter: @FullyQualifiedName = ', @NVARCHAR=@FullyQualifiedName;
-
 
 	-- Remove any bracket type characters
 	SET @FullyQualifiedName = REPLACE(REPLACE(@FullyQualifiedName, N'[', N''), N']', N'');
@@ -89,27 +87,21 @@ BEGIN
 		SET @End = COALESCE(NULLIF(CHARINDEX(@Delimiter, @FullyQualifiedName, @Start), 0), LEN(@FullyQualifiedName) + 1);
 		SET @Database = SUBSTRING(@FullyQualifiedName, @Start, @End - @Start);
 
-
-		/*** output ***/ IF (@Debug=1) EXECUTE [dbo].[PrintOutput] @Indent=1, @Text=N'Parameter: @Database = ', @NVARCHAR=@Database;
-		
+		/*** output ***/ IF (@Debug=1) EXECUTE [dbo].[PrintOutput] @Indent=1, @Text=N'Parameter: @Database = ', @NVARCHAR=@Database;	
 
 		-- Locate and parse the schema name based on the location of the database name
 		SET @Start = ISNULL(@End, 0) + 1;
 		SET @End = COALESCE(NULLIF(CHARINDEX(@Delimiter, @FullyQualifiedName, @Start), 0), LEN(@FullyQualifiedName) + 1);
 		SET @Schema = SUBSTRING(@FullyQualifiedName, @Start, @End - @Start);
 		
-
 		/*** output ***/ IF (@Debug=1) EXECUTE [dbo].[PrintOutput] @Indent=1, @Text=N'Parameter: @Schema = ', @NVARCHAR=@Schema;
 		
-
 		-- Locate and parse the object name based on the location of the schema name
 		SET @Start = ISNULL(@End, 0) + 1;
 		SET @End = COALESCE(NULLIF(CHARINDEX(@Delimiter, @FullyQualifiedName, @Start), 0), LEN(@FullyQualifiedName) + 1);
 		SET @Object = SUBSTRING(@FullyQualifiedName, @Start, @End - @Start);
-		
 
 		/*** output ***/ IF (@Debug=1) EXECUTE [dbo].[PrintOutput] @Indent=1, @Text=N'Parameter: @Object = ', @NVARCHAR=@Object;
-
 
 		-- Set the correct Cedars database type based on the parsed database name.
 		IF (CHARINDEX(N'CEDARS_CET', @Database) > 0) SET @Database = N'CEDARS_CET';
@@ -118,18 +110,14 @@ BEGIN
 		-- Concatenate name for the synonym
 		SET @Synonym = @Database + N'_' + @Object;
 
-
 		/*** output ***/ IF (@Debug=1) EXECUTE [dbo].[PrintOutput] @Indent=1, @Text=N'Parameter: @Synonym = ', @NVARCHAR=@Synonym;
-
 
 		-- Drop the existing synonym name
 		IF EXISTS (SELECT * FROM [sys].[synonyms] WHERE [name] = @Synonym AND [schema_id] = SCHEMA_ID(@Schema))
 		BEGIN
 			SET @SqlString = N'DROP SYNONYM [dbo].[' + @Synonym + N'];';
-			
 
 			/*** output ***/ IF (@Debug=1) EXECUTE [dbo].[PrintOutput] @Indent=1, @Text=N'Parameter: @SqlString = ', @NVARCHAR=@SqlString;
-
 
 			EXECUTE [sys].[sp_executesql] @SqlString;
 		END;
@@ -140,9 +128,7 @@ BEGIN
 		BEGIN
 			SET @SqlString = N'CREATE SYNONYM [' + @Schema + N'].[' + @Synonym + N'] FOR [' + [config].[GetCedarsDatabase](@Database) + N'].[' + @Schema + N'].[' + @Object + N'];';
 
-
 			/*** output ***/ IF (@Debug=1) EXECUTE [dbo].[PrintOutput] @Indent=1, @Text=N'Parameter: @SqlString = ', @NVARCHAR=@SqlString;
-
 
 			EXECUTE [sys].[sp_executesql] @SqlString;
 		END;
