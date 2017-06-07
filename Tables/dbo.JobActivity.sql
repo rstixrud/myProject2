@@ -1,6 +1,7 @@
 RAISERROR ('*** Executing SQL: "...\Tables\dbo.JobActivity.sql"', 0, 1) WITH NOWAIT;
 GO
 
+--comment made here
 IF NOT EXISTS (SELECT * FROM [sys].[objects] WHERE [object_id] = OBJECT_ID(N'[dbo].[JobActivity]') AND [type] IN (N'U')) 
 BEGIN 
 	CREATE TABLE [dbo].[JobActivity] 
