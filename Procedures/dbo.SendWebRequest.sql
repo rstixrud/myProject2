@@ -15,11 +15,9 @@ GO
 /*================================================================================================================
 Script:		dbo.SendWebRequest.sql
 
-Synopsis:	The purpose of this procedure is to automate the creation of synonyms so that the names of the
-			the synonyms and method used to map the objects to the proper Cedars databases are standardized.
+Synopsis:	
 
-Notes:		This makes use of the [config].[GetCedarsDatabase]() function which matches the calling CETMGMT
-			database to the correct Cedars database depending on if the name contains CEDARS or CEDARS_CET.
+Notes:		
 
 ==================================================================================================================
 Revision History:
@@ -66,6 +64,7 @@ BEGIN
 	---------------------------------------------------------------------------------------------------
 	--// CODE STARTS HERE                                                                          //--
 	---------------------------------------------------------------------------------------------------
+	
 	/*** output ***/ IF (@Debug=1) EXECUTE [dbo].[PrintOutput] @Indent=1, @Text=N'Executing: [dbo].[SendWebRequest]...';
 	/*** output ***/ IF (@Debug=1) EXECUTE [dbo].[PrintOutput] @Indent=2, @Text=N'Parameter: @JobID = ', @NVARCHAR=@JobID;
 	/*** output ***/ IF (@Debug=1) EXECUTE [dbo].[PrintOutput] @Indent=2, @Text=N'Parameter: @Status = ', @NVARCHAR=@Status;
